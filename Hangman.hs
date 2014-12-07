@@ -6,8 +6,8 @@ import Data.Char
 
 hangman :: String -> [Char] -> IO ()
 hangman word lettersUsed
-	| all (`elem` lettersUsed) word        = putStrLn ("won, the word was: " ++ word)
-	| (length $ lettersMissed word lettersUsed) > 5    = putStrLn ("Lost, the word was: " ++ word)
+	| all (`elem` lettersUsed) word                                           = putStrLn ("You win! the word was: " ++ word)
+	| (length $ lettersMissed word lettersUsed) >= (length hangmanDrawing)    = putStrLn ("You lose! the word was: " ++ word)
 	| otherwise = do
 		putStrLn ("the word: " ++ (hide word lettersUsed))
 
@@ -15,13 +15,17 @@ hangman word lettersUsed
 
 		l <- toLower . head <$> prompt "Pick a letter:"
 
+		if (length lettersUsed) > 0
+			then do
+				putStrLn ("lettersUsed = " ++ [x | x <- lettersUsed, not $ x `elem` word])
+				putStrLn $ hangmanDrawing !! (length $ lettersMissed word lettersUsed)
+			else return ()
+
 		let lettersUsed'
 			| l `elem` lettersUsed = lettersUsed
 			| otherwise            = l:lettersUsed
 
-		if (length lettersUsed') > 0
-			then putStrLn ("lettersUsed = " ++ [x | x <- lettersUsed', not $ x `elem` word])
-			else return ()
+		-- printing hangman
 
 		hangman word lettersUsed'
 
@@ -35,6 +39,7 @@ main = do
 	-- start game loop
 	hangman chosenWord []
 
+prompt :: String -> IO String
 prompt s = putStr (s ++ " ") >> getLine
 
 hide :: String -> String -> String
@@ -42,3 +47,113 @@ hide word guesses = map (\x -> if x `elem` guesses then x else '-') word
 
 lettersMissed :: String -> String -> [Char]
 lettersMissed word letters = [x | x <- letters, not $ x `elem` word]
+
+hangmanDrawing = [ unlines  [ ""
+                     , ""
+                     , ""
+                     , ""
+                     , ""
+                     , ""
+                     , ""
+                     , ""
+                     ]
+          , unlines  [ ""
+                     , ""
+                     , ""
+                     , ""
+                     , ""
+                     , ""
+                     , ""
+                     , " ___"
+                     ]
+          , unlines  [ ""
+                     , "|"
+                     , "|"
+                     , "|"
+                     , "|"
+                     , "|"
+                     , "|"
+                     , "|___"
+                     ]
+          , unlines  [ "_________"
+                     , "|"
+                     , "|"
+                     , "|"
+                     , "|"
+                     , "|"
+                     , "|"
+                     , "|___"
+                     ]
+          , unlines  [ "_________"
+                     , "|/"
+                     , "|"
+                     , "|"
+                     , "|"
+                     , "|"
+                     , "|"
+                     , "|___"
+                     ]
+          , unlines  [ "_________"
+                     , "|/       |"
+                     , "|"
+                     , "|"
+                     , "|"
+                     , "|"
+                     , "|"
+                     , "|___"
+                     ]
+          , unlines  [ "_________"
+                     , "|/       |"
+                     , "|       (_)"
+                     , "|"
+                     , "|"
+                     , "|"
+                     , "|"
+                     , "|___"
+                     ]
+          , unlines  [ "_________"
+                     , "|/       |"
+                     , "|       (_)"
+                     , "|        |"
+                     , "|        |"
+                     , "|"
+                     , "|"
+                     , "|___"
+                     ]
+          , unlines  [ "_________"
+                     , "|/       |"
+                     , "|       (_)"
+                     , "|       /|"
+                     , "|        |"
+                     , "|"
+                     , "|"
+                     , "|___"
+                     ]
+          , unlines  [ "_________"
+                     , "|/       |"
+                     , "|       (_)"
+                     , "|       /|\\"
+                     , "|        |"
+                     , "|"
+                     , "|"
+                     , "|___"
+                     ]
+          , unlines  [ "_________"
+                     , "|/       |"
+                     , "|       (_)"
+                     , "|       /|\\"
+                     , "|        |"
+                     , "|       /"
+                     , "|"
+                     , "|___"
+                     ]
+          , unlines  [ "_________"
+                     , "|/       |"
+                     , "|       (_)"
+                     , "|       /|\\"
+                     , "|        |"
+                     , "|       / \\"
+                     , "|"
+                     , "|___"
+                     ]
+          ]
